@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable Generator</title>
+
+<style>
+        
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #6b8cae;
+            --accent: #ff6b6b;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            background-image: url("https://technocratsgroup.edu.in/wp-content/uploads/2024/02/TIT-main.jpg");
+       background-size: cover;
+       background-repeat: no-repeat;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .app-description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .app-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .output-section {
+            flex: 2;
+            min-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 12px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--secondary);
+        }
+
+        .generate-btn {
+            background-color: var(--success);
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+        }
+
+        .generate-btn:hover {
+            background-color: #218838;
+        }
+
+        .subject-list {
+            margin-top: 20px;
+        }
+
+        .subject-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: var(--light);
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .delete-btn {
+            background-color: var(--accent);
+            padding: 5px 10px;
+        }
+
+        .timetable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .timetable th,
+        .timetable td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .timetable th {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .timetable tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .time-slot {
+            font-weight: 600;
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .break-cell {
+            background-color: #ffe6e6;
+            font-weight: 600;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .print-btn {
+            background-color: #6c757d;
+        }
+
+        .print-btn:hover {
+            background-color: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            .app-content {
+                flex-direction: column;
+            }
+
+            .input-section,
+            .output-section {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Automated Timetable Generator</h1>
+            <p class="app-description">Technocrats institute of technology & science (TIT&S) bhopal
+            </p>
+        </header>
+
+        <div class="app-content">
+            <div class="input-section">
+                <h2>Input Details</h2>
+
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" placeholder="e.g., operating system">
+                </div>
+
+                <div class="form-group">
+                    <label for="teacher">Teacher</label>
+                    <input type="text" id="teacher" placeholder="e.g., mr. rakesh tiwari sir">
+                </div>
+
+                <div class="form-group">
+                    <label for="hours">Hours per Week</label>
+                    <input type="number" id="hours" min="1" max="10" value="6">
+                </div>
+
+                <button type="submit" id="add-subject">Add Subject</button>
+
+                <div class="subject-list">
+                    <h3>Subjects Added</h3>
+                    <div id="subjects-container"></div>
+                </div>
+
+                <button type="reset" class="generate-btn" id="generate-btn">Generate Timetable</button>
+            </div>
+
+            <div class="output-section">
+                <h2>Generated Timetable</h2>
+
+                <div class="controls">
+                    <button type="button" class="print-btn" id="print-btn">Print Timetable</button>
+                    <button type="reset" id="clear-btn">Clear All</button>
+                </div>
+
+                <div id="timetable-container">
+                    <table class="timetable">
+                        <thead>
+                            <tr>
+                                <th scope="row">Time/Day</th>
+                                <th  scope="row" >Monday</th>
+                                <th scope="row" >Tuesday</th>
+                                <th scope="row" >Wednesday</th>
+                                <th scope="row" >Thursday</th>
+                                <th scope="row" >Friday</th>
+                                <th scope="row" >saturday</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Timetable will be generated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const subjects = [];
+            const addSubjectBtn = document.getElementById('add-subject');
+            const generateBtn = document.getElementById('generate-btn');
+            const printBtn = document.getElementById('print-btn');
+            const clearBtn = document.getElementById('clear-btn');
+            const subjectsContainer = document.getElementById('subjects-container');
+            const timetableBody = document.querySelector('.timetable tbody');
+
+            // Time slots for the timetable
+            const timeSlots = [
+                '10:00 - 11:00',
+                '11:00 - 12:00',
+                '12:00 - 1:00',
+                '1:00 - 2:00', // Break
+                '2:00 - 3:00',
+                '3:00 - 4:00',
+                '4:00 - 5:00'
+            ];
+
+            // Initialize timetable with time slots
+            function initializeTimetable() {
+                timetableBody.innerHTML = '';
+
+                for (let i = 0; i < timeSlots.length; i++) {
+                    const row = document.createElement('tr');
+
+                    // Add time slot cell
+                    const timeCell = document.createElement('td');
+                    timeCell.textContent = timeSlots[i];
+                    timeCell.className = 'time-slot';
+                    row.appendChild(timeCell);
+
+                    // Add cells for each day
+                    for (let j = 0; j < 6; j++) {
+                        const cell = document.createElement('td');
+
+                        // Mark break time
+                        if (timeSlots[i].includes('1:00 - 2:00')) {
+                            cell.textContent = 'BREAK';
+                            cell.className = 'break-cell';
+                        } else {
+                            cell.textContent = '-';
+                        }
+
+                        row.appendChild(cell);
+                    }
+
+                    timetableBody.appendChild(row);
+                }
+            }
+
+            // Add subject to the list
+            addSubjectBtn.addEventListener('click', function () {
+                const subject = document.getElementById('subject').value;
+                const teacher = document.getElementById('teacher').value;
+                const hours = parseInt(document.getElementById('hours').value);
+
+                if (subject && teacher && hours) {
+                    subjects.push({ subject, teacher, hours });
+                    updateSubjectsList();
+
+                    // Clear input fields
+                    document.getElementById('subject').value = '';
+                    document.getElementById('teacher').value = '';
+                    document.getElementById('hours').value = '3';
+                } else {
+                    alert('Please fill all fields');
+                }
+            });
+
+            // Update the subjects list UI
+            function updateSubjectsList() {
+                subjectsContainer.innerHTML = '';
+
+                subjects.forEach((item, index) => {
+                    const subjectItem = document.createElement('div');
+                    subjectItem.className = 'subject-item';
+                    subjectItem.innerHTML = `
+                        <div>
+                            <strong>${item.subject}</strong> (${item.teacher})
+                        </div>
+                        <div>
+                            ${item.hours} hours/week
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        </div>
+                    `;
+
+                    subjectsContainer.appendChild(subjectItem);
+                });
+
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-btn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        subjects.splice(index, 1);
+                        updateSubjectsList();
+                    });
+                });
+            }
+
+            // Generate timetable
+            generateBtn.addEventListener('click', function () {
+                if (subjects.length === 0) {
+                    alert('Please add at least one subject');
+                    return;
+                }
+
+                initializeTimetable();
+                generateTimetable();
+            });
+
+            // Generate the timetable based on subjects
+            function generateTimetable() {
+                // Clear previous content (except break times)
+                const cells = document.querySelectorAll('.timetable td:not(.break-cell)');
+                cells.forEach(cell => {
+                    if (!cell.classList.contains('time-slot') && !cell.classList.contains('break-cell')) {
+                        cell.textContent = '-';
+                    }
+                });
+
+                // For each subject, place it in the timetable
+                subjects.forEach(item => {
+                    let hoursPlaced = 0;
+
+                    while (hoursPlaced < item.hours) {
+                        // Find a random available cell (not break time)
+                        const day = Math.floor(Math.random() * 6) + 1; // 1-5 (skip time column)
+                        let period;
+
+                        // Avoid break period (index 3)
+                        do {
+                            period = Math.floor(Math.random() * timeSlots.length);
+                        } while (period === 3);
+
+                        // Get the cell
+                        const row = timetableBody.rows[period];
+                        const cell = row.cells[day];
+
+                        // If cell is empty, place the subject
+                        if (cell.textContent === '-') {
+                            cell.textContent = `${item.subject} (${item.teacher})`;
+                            hoursPlaced++;
+                        }
+                    }
+                });
+            }
+
+            // Print timetable
+            printBtn.addEventListener('click', function () {
+                window.print();
+            });
+
+            // Clear all subjects
+            clearBtn.addEventListener('click', function () {
+                subjects.length = 0;
+                updateSubjectsList();
+                initializeTimetable();
+            });
+
+            // Initialize the timetable on page load
+            initializeTimetable();
+        });
+    </script>
+</body>
+
+</html>
